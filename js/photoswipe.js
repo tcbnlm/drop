@@ -6,26 +6,23 @@ const lightbox = new PhotoSwipeLightbox({
     pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js'),
 });
 
-// 背景色をセットする専用の関数
-const setBgColor = (pswpInstance) => {
-    const currSlideElement = pswpInstance.currSlide.data.element;
-    if (currSlideElement) {
-        const bgColor = currSlideElement.getAttribute('data-background') || '#000';
-        document.documentElement.style.setProperty('--pswp-bg-color', bgColor);
-    }
+// 背景色を更新する処理を関数化
+const updateColor = (pswpInstance) => {
+    // オプショナルチェーン（?.）を使って、データが存在する時だけ処理する
+    const bgColor = pswpInstance?.currSlide?.data?.element?.getAttribute('data-background') || '#000';
+    document.documentElement.style.setProperty('--pswp-bg-color', bgColor);
 };
 
-// 【ここがポイント】
-// 画面が初期化された後（afterInit）に実行することで、エラーを回避します
+// 画面が完全に準備できた後にイベントを設定する
 lightbox.on('afterInit', () => {
     const pswp = lightbox.pswp;
     
-    // 最初に開いた時の色
-    setBgColor(pswp);
+    // 1枚目を開いた時の色
+    updateColor(pswp);
 
     // 画像を切り替えた時の色
     pswp.on('change', () => {
-        setBgColor(pswp);
+        updateColor(pswp);
     });
 });
 
