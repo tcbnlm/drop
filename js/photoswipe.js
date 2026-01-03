@@ -1,4 +1,3 @@
-<script type="module">
   import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe@5.4.3/dist/photoswipe-lightbox.esm.js';
 
   const lightbox = new PhotoSwipeLightbox({
@@ -18,4 +17,3 @@
   lightbox.on('change', updateBgColor);
   
   lightbox.init();
-</script>
