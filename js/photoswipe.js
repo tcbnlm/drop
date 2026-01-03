@@ -1,24 +1,32 @@
-    import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe@5.4.3/dist/photoswipe-lightbox.esm.js';
+import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe@5.4.3/dist/photoswipe-lightbox.esm.js';
 
-    const lightbox = new PhotoSwipeLightbox({
-        gallery: '#my-gallery',
-        children: '.pswp-link',
-        pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js'),
+const lightbox = new PhotoSwipeLightbox({
+    gallery: '#my-gallery',
+    children: '.pswp-link',
+    pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js'),
+});
+
+// 背景色をセットする専用の関数
+const setBgColor = (pswpInstance) => {
+    const currSlideElement = pswpInstance.currSlide.data.element;
+    if (currSlideElement) {
+        const bgColor = currSlideElement.getAttribute('data-background') || '#000';
+        document.documentElement.style.setProperty('--pswp-bg-color', bgColor);
+    }
+};
+
+// 【ここがポイント】
+// 画面が初期化された後（afterInit）に実行することで、エラーを回避します
+lightbox.on('afterInit', () => {
+    const pswp = lightbox.pswp;
+    
+    // 最初に開いた時の色
+    setBgColor(pswp);
+
+    // 画像を切り替えた時の色
+    pswp.on('change', () => {
+        setBgColor(pswp);
     });
+});
 
-    // 背景色を更新する関数（エラー防止のチェック付き）
-    const updateBgColor = () => {
-        // lightbox.pswp が存在し、かつ現在のスライドが存在するか確認
-        if (lightbox.pswp && lightbox.pswp.currSlide) {
-            const currSlideData = lightbox.pswp.currSlide.data;
-            const bgColor = currSlideData.element.getAttribute('data-background') || '#000';
-            document.documentElement.style.setProperty('--pswp-bg-color', bgColor);
-        }
-    };
-
-    // イベントのタイミングを微調整
-    // beforeOpen ではなく、開き始めた直後の 'openingAnimationStart' を使うとより安定します
-    lightbox.on('openingAnimationStart', updateBgColor);
-    lightbox.on('change', updateBgColor);
-
-    lightbox.init();
+lightbox.init();
