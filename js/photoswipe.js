@@ -3,7 +3,12 @@ import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe@5.4.3/dist/photoswi
 const lightbox = new PhotoSwipeLightbox({
     gallery: '#my-gallery',
     children: '.pswp-link',
-    pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js'),
+		pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js'),
+		
+		showAnimationDuration: 300, // 開く時の時間（ミリ秒）
+    hideAnimationDuration: 300, // 閉じる時の時間（ミリ秒）
+    zoom: false,                // ズームアニメーションをオフにする
+    returnFocus: false,         // 閉じた後に元の画像にフォーカスを戻さない（これもしばしば挙動を邪魔します）
 });
 
 // 背景色を更新する処理を関数化
