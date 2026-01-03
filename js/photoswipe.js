@@ -3,19 +3,36 @@ import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe@5.4.3/dist/photoswi
 const lightbox = new PhotoSwipeLightbox({
     gallery: '#my-gallery',
     children: '.pswp-link',
-		pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js'),
-		
-		showAnimationDuration: 300, // 開く時の時間（ミリ秒）
-    hideAnimationDuration: 300, // 閉じる時の時間（ミリ秒）
-    zoom: false,                // ズームアニメーションをオフにする
-    returnFocus: false,         // 閉じた後に元の画像にフォーカスを戻さない（これもしばしば挙動を邪魔します）
+    pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js'),
+
+    // --- 挙動のカスタマイズ ---
+    showAnimationDuration: 300,
+    hideAnimationDuration: 300,
+    showHideAnimationType: 'fade', // ズームせずにふわっと開閉する
+    zoom: false,
+    returnFocus: false,
+
+    // --- ×ボタンを消して、画像クリックで閉じる設定 ---
+    closeSVG: '<svg></svg>',       // ボタンのアイコンを空にする（物理的に見えなくする）
+    imageClickAction: 'close',     // 画像をクリックしたら閉じる
+    tapAction: 'close',            // スマホでタップしたら閉じる
+    bgClickAction: 'close',        // 背景をクリックしたら閉じる
 });
 
 // 背景色を更新する処理を関数化
 const updateColor = (pswpInstance) => {
     // オプショナルチェーン（?.）を使って、データが存在する時だけ処理する
     const bgColor = pswpInstance?.currSlide?.data?.element?.getAttribute('data-background') || '#000';
+    
+    // CSS変数へ送る
     document.documentElement.style.setProperty('--pswp-bg-color', bgColor);
+    
+    // 【念のため】背景要素へ直接も反映（キャッシュ対策）
+    const pswpBg = document.querySelector('.pswp__bg');
+    if (pswpBg) {
+        pswpBg.style.backgroundColor = bgColor;
+        pswpBg.style.opacity = '1';
+    }
 };
 
 // 画面が完全に準備できた後にイベントを設定する
